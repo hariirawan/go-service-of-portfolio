@@ -12,6 +12,7 @@ func FormatUser(user User, token string) UserFormatter {
 	formatter := UserFormatter{
 		ID:         user.ID,
 		Name:       user.Name,
+		Email:      user.Email,
 		Occupation: user.Occupation,
 		Token:      token,
 	}
