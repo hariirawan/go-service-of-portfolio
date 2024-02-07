@@ -2,7 +2,11 @@ package transaction
 
 import "bwastartup/user"
 
-type ParamTransaction struct {
+type GetTransactionsByCampaignIDInput struct {
 	ID   int `uri:"id" binding:"required"`
 	User user.User
+}
+
+type GetTransactionByUserIDInput struct {
+	ID int `uri:"id" binding:"required"`
 }
