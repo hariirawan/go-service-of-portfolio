@@ -7,34 +7,18 @@ import (
 	"bwastartup/helper"
 	"bwastartup/transaction"
 	"bwastartup/user"
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func main() {
-	err := godotenv.Load()
-
-	if err != nil {
-		log.Fatal(".env file couldn't be loaded")
-	}
-
-	dbName := os.Getenv("DB_DATABASE")
-	dbUser := os.Getenv("DB_USERNAME")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbPassword, dbHost, dbPort, dbName)
+	dsn := "root:ztoko123@tcp(103.175.217.64:3306)/bwastartup?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -55,7 +39,6 @@ func main() {
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	router := gin.Default()
-	router.Use(cors.Default())
 	router.Static("/images", "./images")
 	api := router.Group("/api/v1")
 
@@ -71,15 +54,6 @@ func main() {
 	api.POST("/campaigns/images", authMiddleware(authService, userService), campaignHandler.SaveCampaignImage)
 
 	api.GET("/campaigns/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetTransactionByCampaignID)
-	api.GET("/transactions", authMiddleware(authService, userService), transactionHandler.GetTransasctions)
-
-	// apiKeyLength := 32
-
-	// apiKey, err := helper.GenerateAPIKey(apiKeyLength)
-	// if err != nil {
-	// 	fmt.Println("Failed to generate API key:", err)
-	// 	return
-	// }
 
 	router.Run()
 }
