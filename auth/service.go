@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"os"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -25,7 +24,7 @@ func (s *jwtService) GenerateToken(userID int) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 
-	signedToken, err := token.SignedString([]byte(os.Getenv("API_KEY")))
+	signedToken, err := token.SignedString([]byte("BWA_STARTUP_TEST"))
 
 	if err != nil {
 		return signedToken, err
@@ -41,7 +40,7 @@ func (s *jwtService) ValidateToken(encodedToken string) (*jwt.Token, error) {
 			return nil, errors.New("invalid token")
 		}
 
-		return []byte(os.Getenv("API_KEY")), nil
+		return []byte("BWA_STARTUP_TEST"), nil
 
 	})
 

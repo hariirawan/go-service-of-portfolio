@@ -10,29 +10,23 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func main() {
-	err := godotenv.Load()
+	gin.SetMode(gin.ReleaseMode)
 
-	if err != nil {
-		log.Fatal(".env file couldn't be loaded")
-	}
-
-	dbName := os.Getenv("DB_DATABASE")
-	dbUser := os.Getenv("DB_USERNAME")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
+	dbName := "bwastartup"
+	dbUser := "root"
+	dbPassword := "ztoko123"
+	dbHost := "103.175.217.64"
+	dbPort := "3306"
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbPassword, dbHost, dbPort, dbName)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
