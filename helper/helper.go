@@ -1,6 +1,11 @@
 package helper
 
-import "github.com/go-playground/validator/v10"
+import (
+	"crypto/rand"
+	"encoding/hex"
+
+	"github.com/go-playground/validator/v10"
+)
 
 type Response struct {
 	Meta Meta        `json:"meta"`
@@ -36,4 +41,16 @@ func FormatValidationError(err error) []string {
 	}
 
 	return errors
+}
+
+func GenerateAPIKey(length int) (string, error) {
+	bytes := make([]byte, length)
+
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+
+	}
+
+	print(hex.EncodeToString(bytes))
+	return hex.EncodeToString(bytes), nil
 }
