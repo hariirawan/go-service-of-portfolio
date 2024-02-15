@@ -1,6 +1,9 @@
 package campaign
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type CampaignFormatter struct {
 	ID               int    `json:"id"`
@@ -51,7 +54,7 @@ func FormatCampaign(campaign Campaign) CampaignFormatter {
 	}
 
 	if len(campaign.CampaignImages) > 0 {
-		formatter.ImageURL = campaign.CampaignImages[0].FileName
+		formatter.ImageURL = fmt.Sprintf("http://localhost:8080/%s", campaign.CampaignImages[0].FileName)
 	}
 
 	return formatter
@@ -88,7 +91,7 @@ func FormatCampaignDetail(campaign Campaign) CampaignDetailFormatter {
 	}
 
 	if len(campaign.CampaignImages) > 0 {
-		detail.ImageURL = campaign.CampaignImages[0].FileName
+		detail.ImageURL = fmt.Sprintf("http://localhost:8080/%s", campaign.CampaignImages[0].FileName)
 	}
 
 	// var perks []string

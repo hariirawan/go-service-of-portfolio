@@ -12,6 +12,7 @@ type Repository interface {
 	Update(campaign Campaign) (Campaign, error)
 	CreateImage(campaignImage CampaignImage) (CampaignImage, error)
 	MarkAllImagesAsNonPrimary(campaignID int) (bool, error)
+	Delete(campaign Campaign) (Campaign, error)
 }
 
 type repository struct {
@@ -96,4 +97,14 @@ func (r *repository) MarkAllImagesAsNonPrimary(campignID int) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (r *repository) Delete(campaign Campaign) (Campaign, error) {
+	err := r.db.Delete(&campaign).Error
+
+	if err != nil {
+		return campaign, err
+	}
+
+	return campaign, nil
 }

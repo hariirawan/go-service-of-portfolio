@@ -1,6 +1,9 @@
 package campaign
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 type Service interface {
 	FindCampaigns(userID int) ([]Campaign, error)
@@ -8,6 +11,7 @@ type Service interface {
 	SaveCampaign(input CreateCampaignInput) (Campaign, error)
 	UpdateCampaign(id int, input CreateCampaignInput) (Campaign, error)
 	SaveCampaignImage(input CreateCampaignImageInput, fileLocation string) (CampaignImage, error)
+	DeleteCampaignByID(input DeleteCampaignInput) (Campaign, error)
 }
 
 type service struct {
@@ -94,6 +98,8 @@ func (s *service) UpdateCampaign(id int, input CreateCampaignInput) (Campaign, e
 func (s *service) SaveCampaignImage(input CreateCampaignImageInput, fileLocation string) (CampaignImage, error) {
 	campaign, err := s.repository.FindByID(input.CampaignID)
 
+	fmt.Println(campaign)
+
 	if err != nil {
 		return CampaignImage{}, err
 	}
@@ -125,4 +131,23 @@ func (s *service) SaveCampaignImage(input CreateCampaignImageInput, fileLocation
 	}
 
 	return newCampaignImage, nil
+}
+
+func (s *service) DeleteCampaignByID(input DeleteCampaignInput) (Campaign, error) {
+	campaign, err := s.repository.FindByID(input.ID)
+
+	if err != nil {
+		return campaign, errors.New("Campaign not found")
+	}
+
+	if campaign.UserID != input.User.ID {
+		return Campaign{}, errors.New("not an owner of the campaign")
+	}
+
+	_, err = s.repository.Delete(campaign)
+	if err != nil {
+		return campaign, err
+	}
+
+	return campaign, nil
 }

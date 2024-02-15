@@ -4,7 +4,6 @@ import (
 	"bwastartup/campaign"
 	"bwastartup/user"
 	"errors"
-	"fmt"
 )
 
 type service struct {
@@ -29,7 +28,6 @@ func (s *service) GetTransactionsByCampaignID(input GetTransactionsByCampaignIDI
 		return []Transaction{}, err
 	}
 
-	fmt.Println(input.ID, campaign.UserID, input.User.ID)
 	if campaign.UserID != input.User.ID {
 		return []Transaction{}, errors.New("not an owner of the campaign")
 	}

@@ -131,8 +131,6 @@ func (h *campaignHandler) SaveCampaignImage(ctx *gin.Context) {
 	var input campaign.CreateCampaignImageInput
 	err := ctx.ShouldBind(&input)
 
-	fmt.Println(input)
-
 	if err != nil {
 		response := helper.APIResponse("Error to create campaign image", http.StatusBadRequest, "error", nil)
 		ctx.JSON(http.StatusBadRequest, response)
@@ -150,6 +148,7 @@ func (h *campaignHandler) SaveCampaignImage(ctx *gin.Context) {
 	}
 
 	currentUser := ctx.MustGet("currentUser").(user.User)
+	input.User = currentUser
 	path := fmt.Sprintf("images/%d-%s", currentUser.ID, file.Filename)
 
 	err = ctx.SaveUploadedFile(file, path)
@@ -157,20 +156,45 @@ func (h *campaignHandler) SaveCampaignImage(ctx *gin.Context) {
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
 		response := helper.APIResponse("Failed to upload image", http.StatusBadRequest, "error", data)
-
 		ctx.JSON(http.StatusBadRequest, response)
+		return
 	}
 
 	_, err = h.campaignService.SaveCampaignImage(input, path)
 
 	if err != nil {
-		data := gin.H{"is_uploaded": false}
-		response := helper.APIResponse("Failed to upload image", http.StatusBadRequest, "error", data)
-
+		// data := gin.H{"is_uploaded": false}
+		response := helper.APIResponse("Failed to upload image", http.StatusBadRequest, "error", err.Error())
 		ctx.JSON(http.StatusBadRequest, response)
+		return
 	}
 
 	data := gin.H{"is_uploaded": true}
 	response := helper.APIResponse("Image successfuly uploaded", http.StatusOK, "success", data)
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (h *campaignHandler) DeleteCampaignByID(ctx *gin.Context) {
+	var input campaign.DeleteCampaignInput
+
+	err := ctx.ShouldBindUri(&input)
+	if err != nil {
+		response := helper.APIResponse("Param not valid", http.StatusBadRequest, "error", nil)
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	currentUser := ctx.MustGet("currentUser").(user.User)
+	input.User = currentUser
+
+	campaign, err := h.campaignService.DeleteCampaignByID(input)
+
+	if err != nil {
+		response := helper.APIResponse("Error to delete campaign", http.StatusBadRequest, "error", err.Error())
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Deleted Success", http.StatusOK, "success", campaign)
 	ctx.JSON(http.StatusOK, response)
 }

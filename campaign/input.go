@@ -20,3 +20,8 @@ type CreateCampaignImageInput struct {
 	IsPrimary  bool `form:"is_primary"`
 	User       user.User
 }
+
+type DeleteCampaignInput struct {
+	ID   int `uri:"id" binding:"required"`
+	User user.User
+}
